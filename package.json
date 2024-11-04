@@ -17,6 +17,7 @@
     "tailwindcss": "^3.4.14"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "flowbite": "^2.5.1",
