@@ -1,5 +1,6 @@
 import { Router } from "express";
 import * as controller from "../controllers/cursos.controller.js"
+import { validateCurso } from "../../middleware/cursos.validate.middleware.js"
 
 const route = Router()
 
@@ -7,7 +8,7 @@ route.get( "/cursos", controller.getCursos ) // traemos todos los cursos
 
 route.get( "/cursos/:id", controller.getCursoId ) // traemos el curso por id
 
-route.post( "/cursos", controller.agregarCurso ) // agregamos un curso
+route.post( "/cursos", [validateCurso], controller.agregarCurso ) // agregamos un curso
 
 route.patch("/cursos/:id", controller.actualizarCurso) // actualizamos un curso
 
