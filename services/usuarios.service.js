@@ -1,4 +1,5 @@
 import { MongoClient, ObjectId } from "mongodb";
+import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -12,7 +13,24 @@ export async function createUser(usuario){
     
     const existe = await usuarios.findOne({email: usuario.email});
     if(existe) throw new Error("El usuario ya existe");
+
+    const nuevoUsuario = { ...usuario, passwordConfirm: undefined };
     
-    usuarios.insertOne(usuario);
-    return usuario;
+    nuevoUsuario.password = await bcrypt.hash(usuario.password, 10);
+
+
+    await usuarios.insertOne(nuevoUsuario);
+    return {...nuevoUsuario, password: undefined};
+}
+
+export async function login(usuario){
+    await client.connect();
+
+    const existe = await usuarios.findOne({email: usuario.email});
+    if(!existe) throw new Error("El usuario no existe, por favor registrate");
+
+    const match = await bcrypt.compare(usuario.password, existe.password);
+    if(!match) throw new Error("Contraseña incorrecta");
+
+    return {...existe, password: undefined, passwordConfirm: undefined};
 }
