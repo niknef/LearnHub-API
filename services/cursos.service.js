@@ -9,29 +9,56 @@ const db = client.db("AH20232CP1");
 export async function getCursos(filtros = {}) {
     const filterMongo = { eliminado: { $ne: true } };
     const sortCriteria = {};
-    console.log(filtros)
+
     // Filtro por categoría
     if (filtros.categoria !== undefined) {
         filterMongo.categoria = { $eq: filtros.categoria };
     }
     if (filtros.ordenDuracion !== undefined) {
         const order = filtros.ordenDuracion.toLowerCase() === 'asc' ? 1 : -1;
-        sortCriteria.horas = order; // Ordenamos por el campo 'horas' en ascendente (1) o descendente (-1)
+        sortCriteria.horas = order;
     }
 
     await client.connect();
-    return db.collection("Cursos")
+    const cursos = await db.collection("Cursos")
         .find(filterMongo)
         .sort(sortCriteria)
         .toArray();
+
+    // Resolver nombres de categorías y tecnologías
+    for (let curso of cursos) {
+        // Obtener nombre de la categoría
+        const categoria = await db.collection("Categorias").findOne({ _id: curso.categoriaId });
+        curso.categoria = categoria ? categoria.nombre : null;
+
+        // Obtener nombres de las tecnologías
+        const tecnologias = await db.collection("Tecnologias").find({
+            _id: { $in: curso.tecnologiasId }
+        }).toArray();
+        curso.tecnologias = tecnologias.map(tec => tec.nombre);
+    }
+
+    return cursos;
 }
 
+export async function getCursoId(id_ingresado) {
+    await client.connect();
 
-export async function getCursoId(id_ingresado){
-    await client.connect()
-    console.log("id recibido", id_ingresado)
-    const datos = await db.collection("Cursos").findOne( { _id: ObjectId.createFromHexString(id_ingresado) } )  
-    return datos 
+    // Encontrar el curso
+    const curso = await db.collection("Cursos").findOne({ _id: ObjectId.createFromHexString(id_ingresado) });
+    if (!curso) return null;
+
+    // Obtener nombre de la categoría
+    const categoria = await db.collection("Categorias").findOne({ _id: curso.categoriaId });
+    curso.categoria = categoria ? categoria.nombre : null;
+
+    // Obtener nombres de las tecnologías
+    const tecnologias = await db.collection("Tecnologias").find({
+        _id: { $in: curso.tecnologiasId }
+    }).toArray();
+    curso.tecnologias = tecnologias.map(tec => tec.nombre);
+
+    return curso;
 }
 
 export async function eliminarCurso(id_ingresado){

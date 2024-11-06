@@ -1,7 +1,9 @@
 import express from "express"
 import apiCursoRoute from "./api/routes/cursos.routes.js"
-import apiClienteRoute from "./api/routes/clientes.routes.js"
+import apiProfesorRoute from "./api/routes/profesores.routes.js"
 import apiUsuarioRoute from "./api/routes/usuarios.routes.js"
+import apiTecnologiaRoute from "./api/routes/tecnologias.routes.js"
+import apiCategoriaRoute from "./api/routes/categorias.routes.js"
 import cors from "cors"
 
 const app = express()
@@ -19,8 +21,10 @@ const corsOptions = {
 app.use( cors(corsOptions) )
 
 app.use("/api",apiCursoRoute)
-app.use("/api",apiClienteRoute)
+app.use("/api",apiProfesorRoute)
 app.use("/api",apiUsuarioRoute)
+app.use("/api",apiTecnologiaRoute)
+app.use("/api",apiCategoriaRoute)
 
 
 app.listen(3333, () => console.log("Servidor funcionando"))
