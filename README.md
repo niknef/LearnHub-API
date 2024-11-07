@@ -77,11 +77,36 @@ LearnHub es una plataforma para la gestión de cursos en línea, permitiendo rea
 }
 ```
 
-### Cliente + curso
+### usuario
 
 ```json
 {
-  "idCliente": "66faa126ba400b30701f385c",
-  "idCurso": "66f6bd971cabd45e26002723",
+    "nombre": "nicolas",
+    "apellido": "firpo",
+    "email": "nicolas.firpo@davinci.edu.ar",
+    "password":"Test1234@",
+    "passwordConfirm":"Test1234@",
+    "age":"24",
+    "role":"profesor"
 }
+
+{
+    "nombre": "abigail",
+    "apellido": "gonzalez",
+    "email": "abigailofe2@gmail.com",
+    "password":"Test1234@",
+    "passwordConfirm":"Test1234@",
+    "age":"25",
+    "role":"alumno"
+}
+```
+
+### Profesor
+```json
+{
+    "userId": "672cc68118fee94a8fb054cb",
+    "foto": "perfilnico.jpg",
+    "bio": "Hola a todos! Soy Nicolás firpo, profesor de LearnHub, me encanta el mundo del desarrollo web y me encanta compartir mis conocimientos con todos ustedes!"
+}
+
 ```

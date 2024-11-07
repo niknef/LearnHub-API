@@ -13,6 +13,5 @@ route.patch("/profesores/:id", controller.actualizarProfesor) // actualizamos un
 
 route.delete("/profesores/:id", controller.eliminarProfesor) // eliminamos un Profesor
 
-route.post( "/profesores/curso", controller.agregarCursoProfesor ) // agregamos un curso a un Profesor
 
 export default route

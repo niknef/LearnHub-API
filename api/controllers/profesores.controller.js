@@ -47,11 +47,4 @@ export function eliminarProfesor(req, res){
         .catch( (error) => res.status(500).json({error: error}) )
 }
 
-export function agregarCursoProfesor(req, res){
-    const idProfesor = req.body.idProfesor
-    const idCurso = req.body.idCurso
-    service.agregarCursoCliente(idProfesor, idCurso)
-        .then( result => res.status(201).json(result) )
-        .catch( error => res.status(404).json({error: error}) )
-}
 

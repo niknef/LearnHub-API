@@ -1,9 +1,12 @@
 import * as service from '../../services/usuarios.service.js';
 
-export function createUser(req,res){
+export function createUser(req, res) {
     service.createUser(req.body)
-        .then( (usuario) => res.status(201).json(usuario) )
-        .catch( (error) => res.status(500).json({error: error}) )
+        .then((usuario) => res.status(201).json(usuario))
+        .catch((error) => {
+            const errorMessage = error.message || "Error al crear el usuario";
+            res.status(400).json({ error: errorMessage });
+        });
 }
 
 export function login(req,res){

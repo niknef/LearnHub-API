@@ -9,52 +9,66 @@ const db = client.db("AH20232CP1");
 // Obtener todos los profesores con datos de usuario (sin los eliminados)
 export async function getProfesores() {
     await client.connect();
-    return db.collection("Profesores")
-        .aggregate([
-            { $match: { eliminado: { $ne: true } } }, // Filtra los eliminados
-            {
-                $lookup: {
-                    from: "Usuarios",
-                    localField: "userId",
-                    foreignField: "_id",
-                    as: "usuarioDatos"
-                }
-            },
-            {
-                $project: {
-                    "usuarioDatos.password": 0 // Oculta campos sensibles
-                }
-            }
-        ])
-        .toArray();
-}
 
+    // Obtener todos los profesores sin los eliminados
+    const profesores = await db.collection("Profesores")
+        .find({ eliminado: { $ne: true } })
+        .toArray();
+
+    // Resolver los datos de usuario para cada profesor
+    for (let profesor of profesores) {
+        if (profesor.userId) {
+            const usuario = await db.collection("Usuarios").findOne({ _id: new ObjectId(profesor.userId) });
+            if (usuario) {
+                // Excluir los campos password y passwordConfirm
+                const { password, passwordConfirm, ...usuarioSinDatosSensibles } = usuario;
+                profesor.usuarioDatos = usuarioSinDatosSensibles;
+            } else {
+                profesor.usuarioDatos = null; // En caso de que no se encuentre el usuario
+            }
+        }
+    }
+
+    return profesores;
+}
 // Obtener un profesor por su ID, incluyendo datos de usuario
 export async function getProfesorId(id) {
     await client.connect();
-    return db.collection("Profesores")
-        .aggregate([
-            { $match: { _id: ObjectId.createFromHexString(id), eliminado: { $ne: true } } },
-            {
-                $lookup: {
-                    from: "Usuarios",
-                    localField: "userId",
-                    foreignField: "_id",
-                    as: "usuarioDatos"
-                }
-            },
-            {
-                $project: {
-                    "usuarioDatos.password": 0 // Oculta campos sensibles
-                }
-            }
-        ])
-        .toArray();
+
+    // Buscar el profesor por ID y verificar que no esté eliminado
+    const profesor = await db.collection("Profesores")
+        .findOne({ _id: new ObjectId(id), eliminado: { $ne: true } });
+
+    if (profesor && profesor.userId) {
+        // Resolver los datos de usuario
+        const usuario = await db.collection("Usuarios").findOne({ _id: new ObjectId(profesor.userId) });
+        if (usuario) {
+            // Excluir los campos password y passwordConfirm
+            const { password, passwordConfirm, ...usuarioSinDatosSensibles } = usuario;
+            profesor.usuarioDatos = usuarioSinDatosSensibles;
+        } else {
+            profesor.usuarioDatos = null; // En caso de que no se encuentre el usuario
+        }
+    }
+
+    return profesor || null;
 }
 
-// Agregar nuevo Profesor
 export async function agregarProfesor(profesor) {
     await client.connect();
+
+    // Verificar que el userId existe y tiene el rol de "profesor"
+    const usuario = await db.collection("Usuarios").findOne({ _id: new ObjectId(profesor.userId) });
+    
+    if (!usuario) {
+        throw new Error("El usuario no existe");
+    }
+    
+    if (usuario.role !== "profesor") {
+        throw new Error("El usuario no tiene el rol de profesor");
+    }
+
+    // Insertar el profesor si el usuario tiene el rol adecuado
     return db.collection("Profesores").insertOne(profesor);
 }
 
@@ -81,19 +95,4 @@ export async function eliminarProfesor(id) {
         .updateOne({ _id: ObjectId.createFromHexString(id) }, { $set: { eliminado: true } });
 }
 
-// Agregar un curso a un profesor
-export async function agregarCursoProfesor(idProfesor, idCurso) {
-    await client.connect();
-    const curso = await db.collection("Cursos").findOne({ _id: ObjectId.createFromHexString(idCurso) });
-    const resultado = await db.collection("Profesores").updateOne(
-        { _id: ObjectId.createFromHexString(idProfesor) },
-        { $push: { cursos: curso } }
-    );
 
-    return resultado.modifiedCount > 0 ? "Curso agregado" : "No se agregó el curso";
-}
-
-
-// Consulto con $lookup para unir la colección Usuarios con Profesores en base a userId. Esto traerá todos los datos relevantes del usuario.
-// Proyección de datos $project Incluye password en $project para excluirlo de la respuesta y evitar exponer datos sensibles.
-// Con este ajuste, tu servicio de profesores tendrá la capacidad de agregar automáticamente la información del usuario al realizar consultas, manteniendo el esquema y la consulta organizados y eficientes.

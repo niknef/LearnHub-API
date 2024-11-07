@@ -6,7 +6,7 @@ dotenv.config();
 
 const client = new MongoClient(process.env.MONGODB_URI);
 const db = client.db("AH20232CP1");
-const usuarios = db.collection("usuarios");
+const usuarios = db.collection("Usuarios");
 
 export async function createUser(usuario){
     await client.connect();
