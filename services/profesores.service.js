@@ -15,20 +15,6 @@ export async function getProfesores() {
         .find({ eliminado: { $ne: true } })
         .toArray();
 
-    // Resolver los datos de usuario para cada profesor
-    for (let profesor of profesores) {
-        if (profesor.userId) {
-            const usuario = await db.collection("Usuarios").findOne({ _id: new ObjectId(profesor.userId) });
-            if (usuario) {
-                // Excluir los campos password y passwordConfirm
-                const { password, passwordConfirm, ...usuarioSinDatosSensibles } = usuario;
-                profesor.usuarioDatos = usuarioSinDatosSensibles;
-            } else {
-                profesor.usuarioDatos = null; // En caso de que no se encuentre el usuario
-            }
-        }
-    }
-
     return profesores;
 }
 // Obtener un profesor por su ID, incluyendo datos de usuario
@@ -39,20 +25,9 @@ export async function getProfesorId(id) {
     const profesor = await db.collection("Profesores")
         .findOne({ _id: new ObjectId(id), eliminado: { $ne: true } });
 
-    if (profesor && profesor.userId) {
-        // Resolver los datos de usuario
-        const usuario = await db.collection("Usuarios").findOne({ _id: new ObjectId(profesor.userId) });
-        if (usuario) {
-            // Excluir los campos password y passwordConfirm
-            const { password, passwordConfirm, ...usuarioSinDatosSensibles } = usuario;
-            profesor.usuarioDatos = usuarioSinDatosSensibles;
-        } else {
-            profesor.usuarioDatos = null; // En caso de que no se encuentre el usuario
-        }
-    }
-
     return profesor || null;
 }
+
 
 export async function agregarProfesor(profesor) {
     await client.connect();
@@ -68,8 +43,20 @@ export async function agregarProfesor(profesor) {
         throw new Error("El usuario no tiene el rol de profesor");
     }
 
-    // Insertar el profesor si el usuario tiene el rol adecuado
-    return db.collection("Profesores").insertOne(profesor);
+    // Crear el objeto `profesor` con la estructura completa
+    const profesorConDatosCompletos = {
+        ...profesor,
+        user: {
+            id: usuario._id,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+            mail: usuario.mail,
+            role: usuario.role
+        }
+    };
+
+    // Insertar el documento completo en la colección Profesores
+    return db.collection("Profesores").insertOne(profesorConDatosCompletos);
 }
 
 // Modificar Profesor

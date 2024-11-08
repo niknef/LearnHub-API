@@ -45,7 +45,7 @@ export function actualizarCurso(req, res){
 //funcion para agregar un curso
 export function agregarCurso(req, res) {
     service.agregarCurso(req.body)
-      .then((curso) => res.status(201).json(curso))
+      .then((curso, profesorId) => res.status(201).json(curso, profesorId))
       .catch((error) => {
         console.error("Error al agregar el curso:", error);
         res.status(500).json({ error: error.message || 'Error desconocido al agregar el curso' });
