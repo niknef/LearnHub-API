@@ -99,6 +99,22 @@ LearnHub es una plataforma para la gestión de cursos en línea, permitiendo rea
     "age":"25",
     "role":"alumno"
 }
+
+{
+    "nombre": "jorge",
+    "apellido": "firpo",
+    "email": "jorgefirpo@gmail.com",
+    "password":"Test1234@",
+    "passwordConfirm":"Test1234@",
+    "age":"25",
+    "role":"alumno"
+}
+
+{
+    "email": "jorgefirpo@gmail.com",
+    "password":"Test1234@"
+
+}
 ```
 
 ### Profesor
