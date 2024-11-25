@@ -1,5 +1,7 @@
 import { MongoClient, ObjectId } from "mongodb";
+import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt";
+import { crearToken } from "./token.service.js"
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -7,6 +9,8 @@ dotenv.config();
 const client = new MongoClient(process.env.MONGODB_URI);
 const db = client.db("AH20232CP1");
 const usuarios = db.collection("Usuarios");
+
+
 
 export async function createUser(usuario){
     await client.connect();
@@ -32,5 +36,7 @@ export async function login(usuario){
     const match = await bcrypt.compare(usuario.password, existe.password);
     if(!match) throw new Error("Contraseña incorrecta");
 
-    return {...existe, password: undefined, passwordConfirm: undefined};
+    const token = await crearToken(existe)
+    
+    return { ...existe, token: token, password: undefined, passwordConfirm: undefined }
 }
