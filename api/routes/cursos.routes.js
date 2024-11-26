@@ -7,7 +7,7 @@ const route = Router()
 
 route.get( "/cursos",[validateToken], controller.getCursos ) // traemos todos los cursos
 
-route.get( "/cursos/:id", controller.getCursoId ) // traemos el curso por id
+route.get( "/cursos/:id", [validateToken], controller.getCursoId ) // traemos el curso por id
 
 route.post( "/cursos", [validateCurso], controller.agregarCurso ) // agregamos un curso
 

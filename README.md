@@ -52,18 +52,25 @@ LearnHub es una plataforma para la gestión de cursos en línea, permitiendo rea
 
 ```json
 {
-  "nombre": "JavaScript Avanzado",
-  "categoria": "frontend",
-  "descripcion": "Profundiza en JavaScript para crear aplicaciones interactivas y manejar eventos del DOM.",
-  "tecnologias": [
-    "JavaScript",
-    "ES6+",
-    "APIs",
-    "DOM"
-  ],
-  "horas": 30,
-  "img": "frontend.jpg",
-  "link": "https://github.com/niknef/LearnHub"
+    "nombre": "JavaScript Avanzado",
+    "categoria": "frontend",
+    "descripcion": "Profundiza en JavaScript para crear aplicaciones interactivas y manejar eventos del DOM.",
+    "tecnologias": ["JavaScript", "ES6+", "APIs", "DOM"],
+    "horas": 30,
+    "img": "frontend.jpg",
+    "profesorId": "672cc910086e02ec61d98892",
+    "link": "https://github.com/niknef"
+}
+
+{
+    "nombre": "Test de carga de curso",
+    "categoria": "frontend",
+    "descripcion": "Test de carga de curso desde el profesor juan",
+    "tecnologias": ["JavaScript", "ES6+", "APIs", "DOM"],
+    "horas": 30,
+    "img": "frontend.jpg",
+    "profesorId": "67464ad2b714abfb982becc2",
+    "link": "https://github.com/niknef"
 }
 ```
 
@@ -123,6 +130,12 @@ LearnHub es una plataforma para la gestión de cursos en línea, permitiendo rea
     "userId": "672cc68118fee94a8fb054cb",
     "foto": "perfilnico.jpg",
     "bio": "Hola a todos! Soy Nicolás firpo, profesor de LearnHub, me encanta el mundo del desarrollo web y me encanta compartir mis conocimientos con todos ustedes!"
+}
+
+{
+    "userId": "67464a4bb714abfb982becc0",
+    "foto": "perfilnico.jpg",
+    "bio": "Hola a todos! Soy Juan, profesor de LearnHub, me encanta el mundo del desarrollo web y me encanta compartir mis conocimientos con todos ustedes!"
 }
 
 ```

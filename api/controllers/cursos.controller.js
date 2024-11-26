@@ -1,13 +1,14 @@
 import * as service from "../../services/cursos.service.js";
 
 //funccion para traer muestros cursos  
-export function getCursos(req,res){
+export function getCursos(req, res) {
     const filtros = req.query;
-    
+
     service.getCursos(filtros)
-        .then( (cursos) => res.status(200).json(cursos) )
-        .catch( (error) => res.status(500).json({error: error}) )
+        .then((cursos) => res.status(200).json(cursos))
+        .catch((error) => res.status(500).json({ error: error.message || "Error desconocido" }));
 }
+
 
 //funcion para traer un curso por su id
 export function getCursoId(req, res){
@@ -42,13 +43,13 @@ export function actualizarCurso(req, res){
         .catch( (error) => res.status(500).json({error: error}) )
 }
 
-//funcion para agregar un curso
 export function agregarCurso(req, res) {
-    service.agregarCurso(req.body)
-      .then((curso, profesorId) => res.status(201).json(curso, profesorId))
-      .catch((error) => {
-        console.error("Error al agregar el curso:", error);
-        res.status(500).json({ error: error.message || 'Error desconocido al agregar el curso' });
-      });
-  }
+    const { profesorId, ...cursoData } = req.body;
 
+    service.agregarCurso(cursoData, profesorId)
+        .then((curso) => res.status(201).json(curso))
+        .catch((error) => {
+            console.error("Error al agregar el curso:", error);
+            res.status(500).json({ error: error.message || 'Error desconocido al agregar el curso' });
+        });
+}

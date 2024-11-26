@@ -34,11 +34,11 @@ export async function agregarProfesor(profesor) {
 
     // Verificar que el userId existe y tiene el rol de "profesor"
     const usuario = await db.collection("Usuarios").findOne({ _id: new ObjectId(profesor.userId) });
-    
+
     if (!usuario) {
         throw new Error("El usuario no existe");
     }
-    
+
     if (usuario.role !== "profesor") {
         throw new Error("El usuario no tiene el rol de profesor");
     }
@@ -50,14 +50,23 @@ export async function agregarProfesor(profesor) {
             id: usuario._id,
             nombre: usuario.nombre,
             apellido: usuario.apellido,
-            mail: usuario.mail,
+            email: usuario.email,
             role: usuario.role
         }
     };
 
     // Insertar el documento completo en la colección Profesores
-    return db.collection("Profesores").insertOne(profesorConDatosCompletos);
+    const resultadoProfesor = await db.collection("Profesores").insertOne(profesorConDatosCompletos);
+
+    // Actualizar el usuario con el profesorId
+    await db.collection("Usuarios").updateOne(
+        { _id: usuario._id },
+        { $set: { profesorId: resultadoProfesor.insertedId } }
+    );
+
+    return resultadoProfesor;
 }
+
 
 // Modificar Profesor
 export async function modificarProfesor(id, datos) {
