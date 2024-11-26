@@ -40,3 +40,4 @@ export async function login(usuario){
     
     return { ...existe, token: token, password: undefined, passwordConfirm: undefined }
 }
+
