@@ -12,4 +12,3 @@ export async function validateCurso(req, res, next){
     }
 
 }
-

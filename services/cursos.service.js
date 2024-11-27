@@ -95,4 +95,3 @@ export async function agregarCurso(curso, profesorId) {
 
     return cursoInsertado;
 }
-
